@@ -1,51 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Do Not Scan Until Midnight</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        background: black;
-        color: white;
-        padding-top: 100px;
-    }
-    .hidden {
-        display: none;
-    }
-</style>
-</head>
-<body>
-
-<h1 id="title">⏳ Don’t scan until midnight...</h1>
-
-<div id="locked">
-    <p>This surprise unlocks at midnight 🌙</p>
-</div>
-
-<div id="unlocked" class="hidden">
-    <h2>🎉 Surprise!</h2>
-    <p id="message"></p>
-</div>
-
 <script>
-    // 🔧 SET YOUR UNLOCK TIME HERE
-    const unlockTime = new Date();
-    unlockTime.setHours(24, 0, 0, 0); // Midnight
+const params = new URLSearchParams(window.location.search);
 
-    // 🎁 CUSTOM MESSAGE
-    const surpriseMessage = "I’ve been wanting to tell you this… I love you ❤️";
+// 🎁 Get dynamic values
+const message = params.get("msg") || "🎁 Surprise!";
+const timeParam = params.get("time");
 
+// Default fallback (1 hour from now)
+let unlockTime = new Date();
+unlockTime.setHours(unlockTime.getHours() + 1);
+
+if (timeParam) {
+    unlockTime = new Date(timeParam);
+}
+
+function update() {
     const now = new Date();
 
     if (now >= unlockTime) {
-        document.getElementById("title").innerText = "🎁 It’s Time...";
+        document.getElementById("title").innerText = "🎉 It’s Time!";
         document.getElementById("locked").style.display = "none";
         document.getElementById("unlocked").classList.remove("hidden");
-        document.getElementById("message").innerText = surpriseMessage;
-    }
-</script>
+        document.getElementById("message").innerText = decodeURIComponent(message);
+    } else {
+        const diff = unlockTime - now;
 
-</body>
-</html>
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        document.getElementById("countdown").innerText =
+            `Unlocks in ${hours}h ${minutes}m ${seconds}s`;
+    }
+}
+
+setInterval(update, 1000);
+update();
+</script>
