@@ -1,38 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Midnight Gift</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+.box {
+    padding: 30px;
+}
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+    <h1 id="title">⏳ Locked Gift</h1>
+
+    <div id="locked">
+        <p>This gift unlocks soon...</p>
+        <p id="countdown"></p>
+    </div>
+
+    <div id="unlocked" class="hidden">
+        <h2>🎉 It’s Time!</h2>
+        <p id="message"></p>
+    </div>
+</div>
+
 <script>
-const params = new URLSearchParams(window.location.search);
+// Wait until page loads
+document.addEventListener("DOMContentLoaded", function () {
 
-// 🎁 Get dynamic values
-const message = params.get("msg") || "🎁 Surprise!";
-const timeParam = params.get("time");
+    const params = new URLSearchParams(window.location.search);
 
-// Default fallback (1 hour from now)
-let unlockTime = new Date();
-unlockTime.setHours(unlockTime.getHours() + 1);
+    const message = params.get("msg") || "This was meant just for you ❤️";
 
-if (timeParam) {
-    unlockTime = new Date(timeParam);
-}
-
-function update() {
+    // ✅ SET TODAY 10:15 AM
     const now = new Date();
+    let unlockTime = new Date();
 
-    if (now >= unlockTime) {
-        document.getElementById("title").innerText = "🎉 It’s Time!";
-        document.getElementById("locked").style.display = "none";
-        document.getElementById("unlocked").classList.remove("hidden");
-        document.getElementById("message").innerText = decodeURIComponent(message);
-    } else {
-        const diff = unlockTime - now;
+    unlockTime.setHours(10, 15, 0, 0); // 10:15 AM today
 
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff / (1000 * 60)) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
+    function update() {
+        const now = new Date();
 
-        document.getElementById("countdown").innerText =
-            `Unlocks in ${hours}h ${minutes}m ${seconds}s`;
+        if (now >= unlockTime) {
+            document.getElementById("title").innerText = "🎁 Opened!";
+            document.getElementById("locked").style.display = "none";
+            document.getElementById("unlocked").classList.remove("hidden");
+            document.getElementById("message").innerText = decodeURIComponent(message);
+        } else {
+            const diff = unlockTime - now;
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById("countdown").innerText =
+                `Unlocks in ${hours}h ${minutes}m ${seconds}s`;
+        }
     }
-}
 
-setInterval(update, 1000);
-update();
+    setInterval(update, 1000);
+    update();
+});
 </script>
+
+</body>
+</html>
