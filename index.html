@@ -58,21 +58,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const params = new URLSearchParams(window.location.search);
 
-    // 💙 Elder brother poem
-    const message = params.get("msg") || `Not all heroes wear crowns,
-Some just stand quietly behind.
+    // 🔓 Decode function
+    function decodeMessage(encoded) {
+        try {
+            return atob(decodeURIComponent(encoded));
+        } catch {
+            return "🎁 Surprise!";
+        }
+    }
 
-You never asked for thanks,
-Yet you gave me strength every time I fell.
+    // 🎁 Get message (decoded)
+    const message = params.get("msg") 
+        ? decodeMessage(params.get("msg")) 
+        : "🎁 Surprise!";
 
-In ways I may never fully say,
-You’ve always been my shield.
+    // ⏰ Get unlock time
+    const timeParam = params.get("time");
 
-Thank you… for being more than a brother. 💙`;
-
-    // ⏰ SET UNLOCK TIME (Today 10:15 AM)
     let unlockTime = new Date();
-    unlockTime.setHours(10, 15, 0, 0);
+    unlockTime.setHours(unlockTime.getHours() + 1); // fallback
+
+    if (timeParam) {
+        unlockTime = new Date(timeParam);
+    }
 
     function update() {
         const now = new Date();
