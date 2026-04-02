@@ -54,11 +54,23 @@ body {
 </div>
 
 <script>
+// 🚫 Disable right click
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// 🚫 Disable common inspect shortcuts
+document.addEventListener("keydown", function(e) {
+    if (e.key === "F12" || 
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.key === "U")) {
+        e.preventDefault();
+    }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
 
     const params = new URLSearchParams(window.location.search);
 
-    // 🔓 Decode function
+    // 🔓 Decode hidden message
     function decodeMessage(encoded) {
         try {
             return atob(decodeURIComponent(encoded));
@@ -67,20 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // 🎁 Get message (decoded)
-    const message = params.get("msg") 
-        ? decodeMessage(params.get("msg")) 
-        : "🎁 Surprise!";
+    let _x = params.get("msg");
+    let message = _x ? decodeMessage(_x) : "🎁 Surprise!";
 
-    // ⏰ Get unlock time
-    const timeParam = params.get("time");
-
+    // ⏰ TODAY 10:15 AM
     let unlockTime = new Date();
-    unlockTime.setHours(unlockTime.getHours() + 1); // fallback
-
-    if (timeParam) {
-        unlockTime = new Date(timeParam);
-    }
+    unlockTime.setHours(10, 15, 0, 0);
 
     function update() {
         const now = new Date();
